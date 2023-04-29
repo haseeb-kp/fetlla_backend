@@ -44,3 +44,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.name
+
+
+class Courses(models.Model):
+    name = models.CharField(max_length=500, blank=True)
+    user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    assigned_on = models.DateTimeField(null=True, blank=True)
+    expiry_date = models.DateTimeField(null=True, blank=True)
+    is_completed = models.BooleanField(default=False)
+
+    def mark_as_completed(self):
+        self.is_completed = True
+        self.save()
