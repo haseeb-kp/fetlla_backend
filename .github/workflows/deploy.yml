@@ -1,0 +1,33 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Copy SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+      
+      - name: SSH into EC2
+        uses: appleboy/ssh-action@v0.4.0
+        with:
+          host: ${{ secrets.EC2_PUBLIC_IP }}
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /home/ubuntu/fetlla_backend
+            git pull origin dev
+            docker-compose down
+            docker-compose up -d --build
