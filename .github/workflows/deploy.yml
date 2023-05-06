@@ -20,7 +20,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
       
       - name: SSH into EC2
-        uses: appleboy/ssh-action@v0.4.0
+        uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.EC2_PUBLIC_IP }}
           username: ubuntu
